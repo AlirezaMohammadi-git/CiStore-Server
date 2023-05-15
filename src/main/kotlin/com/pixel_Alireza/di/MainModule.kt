@@ -2,6 +2,7 @@ package com.pixel_Alireza.di
 
 import com.pixel_Alireza.data.user.KMongoUserDataManager
 import com.pixel_Alireza.data.user.UserDataManager
+import com.pixel_Alireza.globalRoom.RoomController
 import com.pixel_Alireza.security.hashing.HashingService
 import com.pixel_Alireza.security.hashing.SHA256HashingService
 import com.pixel_Alireza.security.token.JWTtokenService
@@ -27,6 +28,8 @@ val mainModule = module {
     single <TokenService> { JWTtokenService() }
 
     single <HashingService> { SHA256HashingService() }
+
+    single { RoomController() }
 
 
 }

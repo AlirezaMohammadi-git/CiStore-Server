@@ -2,6 +2,7 @@ package com.pixel_Alireza
 
 import com.pixel_Alireza.data.user.UserDataManager
 import com.pixel_Alireza.di.mainModule
+import com.pixel_Alireza.globalRoom.RoomController
 import com.pixel_Alireza.plugins.*
 import com.pixel_Alireza.security.hashing.HashingService
 import com.pixel_Alireza.security.token.TokenConfig
@@ -35,6 +36,7 @@ fun Application.module() {
     val userDataSource: UserDataManager by inject()
     val hashingService: HashingService by inject()
     val tokenService: TokenService by inject()
+    val roomController: RoomController by inject()
 
 
     configureSecurity(config = tokenConfig)
@@ -45,6 +47,7 @@ fun Application.module() {
         hashingService ,
         userDataSource ,
         tokenService ,
-        tokenConfig
+        tokenConfig ,
+        roomController
     )
 }
