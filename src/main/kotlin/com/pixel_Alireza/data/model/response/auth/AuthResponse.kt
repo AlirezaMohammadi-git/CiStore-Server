@@ -1,4 +1,4 @@
-package com.pixel_Alireza.data.response.auth
+package com.pixel_Alireza.data.model.response.auth
 
 import kotlinx.serialization.Serializable
 

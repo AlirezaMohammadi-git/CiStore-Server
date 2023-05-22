@@ -1,4 +1,4 @@
-package com.pixel_Alireza.data.message
+package com.pixel_Alireza.data.model.message
 
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId

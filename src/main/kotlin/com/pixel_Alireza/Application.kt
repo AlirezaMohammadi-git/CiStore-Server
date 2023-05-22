@@ -1,13 +1,17 @@
 package com.pixel_Alireza
 
-import com.pixel_Alireza.data.user.UserDataManager
+import com.pixel_Alireza.data.CustomRoomDataSource
+import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.di.mainModule
-import com.pixel_Alireza.globalRoom.RoomController
+import com.pixel_Alireza.globalRoom.ChatRoomController
 import com.pixel_Alireza.plugins.*
 import com.pixel_Alireza.security.hashing.HashingService
 import com.pixel_Alireza.security.token.TokenConfig
 import com.pixel_Alireza.security.token.TokenService
 import io.ktor.server.application.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
@@ -15,6 +19,7 @@ import org.koin.logger.slf4jLogger
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
 
+@OptIn(DelicateCoroutinesApi::class)
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
 
@@ -22,6 +27,8 @@ fun Application.module() {
         slf4jLogger()
         modules(mainModule)
     }
+
+
 
 
     // 1hour = 60L * 60L * 1000
@@ -36,8 +43,8 @@ fun Application.module() {
     val userDataSource: UserDataManager by inject()
     val hashingService: HashingService by inject()
     val tokenService: TokenService by inject()
-    val roomController: RoomController by inject()
-
+    val chatRoomController: ChatRoomController by inject()
+    val customRoomDataSource: CustomRoomDataSource by inject()
 
     configureSecurity(config = tokenConfig)
     configureMonitoring()
@@ -48,6 +55,9 @@ fun Application.module() {
         userDataSource ,
         tokenService ,
         tokenConfig ,
-        roomController
+        chatRoomController ,
+        customRoomDataSource
     )
+
+
 }

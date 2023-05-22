@@ -1,6 +1,6 @@
 package com.pixel_Alireza.session
 
-data class MySession(
+data class ChatSession(
     val userName : String ,
     val sessionId : String
 )

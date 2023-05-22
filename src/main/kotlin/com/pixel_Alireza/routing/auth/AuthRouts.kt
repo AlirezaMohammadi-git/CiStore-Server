@@ -1,11 +1,14 @@
 package com.pixel_Alireza.routing.auth
 
-import com.pixel_Alireza.data.request.AuthenticationReq
-import com.pixel_Alireza.data.response.auth.SecretInfo
-import com.pixel_Alireza.data.response.auth.SignInResponse
-import com.pixel_Alireza.data.response.auth.SignUpResponse
-import com.pixel_Alireza.data.user.User
-import com.pixel_Alireza.data.user.UserDataManager
+import com.example.chatapp.utils.Resource
+import com.pixel_Alireza.data.model.request.AuthenticationReq
+import com.pixel_Alireza.data.model.request.UpdatePassword
+import com.pixel_Alireza.data.model.request.UpdateUsername
+import com.pixel_Alireza.data.model.response.auth.SecretInfo
+import com.pixel_Alireza.data.model.response.auth.SignInResponse
+import com.pixel_Alireza.data.model.response.auth.SignUpResponse
+import com.pixel_Alireza.data.model.user.User
+import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.security.hashing.HashingService
 import com.pixel_Alireza.security.hashing.SaltedHash
 import com.pixel_Alireza.security.token.TokenClaim
@@ -36,44 +39,43 @@ fun Route.signUp(
             return@post
         }
 
-        if (req.username == null){
+        if (req.username == null) {
             call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Fields blank or short pass exception"))
             return@post
-        }else{
+        } else {
             username = req.username
         }
 
         //<editor-fold desc="isFormatCorrect?">
-        val isFieldsBlank = req.password.isBlank() || req.username.isBlank()
+        val isFieldsBlank = req.password.isBlank() || username.isBlank()
         val isPasswordTooShort = req.password.length < 8
-        if (isFieldsBlank || isPasswordTooShort) {
-            call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Fields blank or short pass exception"))
+        val isEmail = req.email.contains("@") && req.email.contains(".")
+        if (isFieldsBlank || isPasswordTooShort || isEmail) {
+            call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Invalid information"))
             return@post
         }
         //</editor-fold>
 
-        val sameUsername = userDataManager.sameUsernameChecker(username = username)
-        val sameEmail = userDataManager.sameEmailChecker(req.email)
-
-        if (sameEmail || sameUsername) {
-            call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Username or Email already exist!"))
-        } else {
-            val saltedHash = hashingService.generateSaltedHash(req.password)
-            val user = User(
-                username = req.username,
-                email = req.email,
-                password = saltedHash.hash,
-                salt = saltedHash.salt
-            )
-            val res = userDataManager.insertNewUser(user)
-            if (res) {
-                call.respond(HttpStatusCode.OK, SignUpResponse(res, "user added successfully"))
-            } else {
-                call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Something went wrong (Server)"))
+        val saltedHash = hashingService.generateSaltedHash(req.password)
+        val user = User(
+            username = username,
+            email = req.email,
+            password = saltedHash.hash,
+            salt = saltedHash.salt
+        )
+        val res = userDataManager.insertNewUser(user)
+        when (res) {
+            is Resource.Success -> {
+                call.respond(HttpStatusCode.OK, SignUpResponse(res.data ?: true, " user added successfully"))
             }
 
+            is Resource.Error -> {
+                call.respond(
+                    HttpStatusCode.Conflict,
+                    SignUpResponse(false, res.message ?: " something went wrong from server")
+                )
+            }
         }
-
     }
 
 }
@@ -116,10 +118,6 @@ fun Route.signIn(
             config = config,
             claims = arrayOf(
                 TokenClaim(
-                    name = "userID",
-                    value = user.id.toString()
-                ),
-                TokenClaim(
                     name = "username",
                     value = user.username
                 ),
@@ -153,7 +151,6 @@ fun Route.authenticateUser() {
 
 
 fun Route.getSecretInfo() {
-
     authenticate {
         get("secret") {
             val principal = call.principal<JWTPrincipal>()
@@ -171,3 +168,80 @@ fun Route.getSecretInfo() {
     }
 
 }
+
+
+fun Route.updateUsername(
+    userDataManager: UserDataManager
+) {
+    authenticate {
+        post<UpdateUsername>("updateUsername") {
+            if (it.email.isNotBlank() || it.username.isNotBlank()) {
+                userDataManager.updateUsername(it.email, it.username)
+                call.respond(HttpStatusCode.Accepted, "username changed")
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "null email or username ")
+            }
+        }
+    }
+
+}
+
+
+fun Route.updatePass(
+    userDataManager: UserDataManager ,
+    hashingService: HashingService
+) {
+        post<UpdatePassword>("/updatePass") {
+            if (it.email.isBlank() && it.newPassword.isBlank()) {
+                call.respond(HttpStatusCode.BadRequest, SignUpResponse(false, "invalid information"))
+            }
+            val user = userDataManager.getUserByEmail(it.email)
+            if (user!=null){
+                val isPassValid = hashingService.verify(
+                    userPass = it.oldPass,
+                    saltedHash = SaltedHash(
+                        hash = user.password,
+                        salt = user.salt
+                    )
+                )
+                if (isPassValid){
+                    val res = userDataManager.updatePassword(it.email, it.newPassword)
+                    if (res) {
+                        call.respond(HttpStatusCode.OK, SignUpResponse(true, "password updated"))
+                    } else {
+                        call.respond(HttpStatusCode.ExpectationFailed, SignUpResponse(false, "something went wrong in server"))
+                    }
+
+                }
+            }else{
+                call.respond(HttpStatusCode.OK, SignUpResponse(true, "wrong email or password"))
+            }
+        }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

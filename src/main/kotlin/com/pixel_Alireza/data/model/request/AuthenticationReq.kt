@@ -1,4 +1,4 @@
-package com.pixel_Alireza.data.request
+package com.pixel_Alireza.data.model.request
 
 import kotlinx.serialization.Serializable
 

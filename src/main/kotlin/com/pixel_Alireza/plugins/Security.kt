@@ -3,7 +3,7 @@ package com.pixel_Alireza.plugins
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.pixel_Alireza.security.token.TokenConfig
-import com.pixel_Alireza.session.MySession
+import com.pixel_Alireza.session.ChatSession
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -34,14 +34,13 @@ fun Application.configureSecurity(config: TokenConfig) {
 
 
     install(Sessions) {
-        cookie<MySession>("MY_SESSION") {
-            cookie.extensions["SameSite"] = "lax"
-        }
+        cookie<ChatSession>("CHAT_SESSION")
     }
-    intercept( ApplicationCallPipeline.Features ) {
-        if (call.sessions.get<MySession>() == null) {
+
+    intercept(ApplicationCallPipeline.Features) {
+        if (call.sessions.get<ChatSession>() == null) {
             val username = call.parameters["username"] ?: "Guest"
-            call.sessions.set(MySession(userName = username, sessionId = generateNonce()))
+            call.sessions.set(ChatSession(userName = username, sessionId = generateNonce()))
         }
     }
 }

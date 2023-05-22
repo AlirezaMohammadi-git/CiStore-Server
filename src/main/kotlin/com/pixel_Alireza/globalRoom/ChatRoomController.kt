@@ -1,13 +1,13 @@
 package com.pixel_Alireza.globalRoom
 
-import com.pixel_Alireza.data.message.Message
+import com.pixel_Alireza.data.model.message.Message
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.util.concurrent.ConcurrentHashMap
 
-class RoomController {
+class ChatRoomController {
 
     private val activeMembersList =
         ConcurrentHashMap<String, Member>() // key , value -> this is something like List<Map> in android
@@ -32,7 +32,6 @@ class RoomController {
     suspend fun sendMessage(
         senderUsername: String, message: String
     ) {
-
         activeMembersList.values.forEach { member ->
             val userMessage = Message(
                 text = message,
