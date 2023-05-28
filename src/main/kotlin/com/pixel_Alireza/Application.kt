@@ -1,6 +1,6 @@
 package com.pixel_Alireza
 
-import com.pixel_Alireza.data.CustomRoomDataSource
+import com.pixel_Alireza.data.ChatDatasource
 import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.di.mainModule
 import com.pixel_Alireza.globalRoom.ChatRoomController
@@ -10,8 +10,6 @@ import com.pixel_Alireza.security.token.TokenConfig
 import com.pixel_Alireza.security.token.TokenService
 import io.ktor.server.application.*
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
@@ -44,7 +42,7 @@ fun Application.module() {
     val hashingService: HashingService by inject()
     val tokenService: TokenService by inject()
     val chatRoomController: ChatRoomController by inject()
-    val customRoomDataSource: CustomRoomDataSource by inject()
+    val chatDatasource: ChatDatasource by inject()
 
     configureSecurity(config = tokenConfig)
     configureMonitoring()
@@ -56,7 +54,7 @@ fun Application.module() {
         tokenService ,
         tokenConfig ,
         chatRoomController ,
-        customRoomDataSource
+        chatDatasource
     )
 
 

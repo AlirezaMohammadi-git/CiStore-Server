@@ -1,13 +1,12 @@
 package com.pixel_Alireza.routing.socket
 
-import com.pixel_Alireza.data.model.roomInfo.RoomInfo
+import com.pixel_Alireza.data.model.response.CommonResponse
+import com.pixel_Alireza.data.model.response.auth.SignUpResponse
 import com.pixel_Alireza.globalRoom.ChatRoomController
 import com.pixel_Alireza.globalRoom.MemberAlreadyExistException
 import com.pixel_Alireza.session.ChatSession
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -19,7 +18,6 @@ import kotlinx.coroutines.channels.consumeEach
 fun Route.globalChat(
     chatRoomController: ChatRoomController
 ) {
-
     webSocket("/globalChat") {
 //        val session = call.sessions.get<MySession>() // getting a MySession form android
         val session = this.call.sessions.get<ChatSession>()
@@ -56,6 +54,39 @@ fun Route.globalChat(
         }
 
     }
+}
 
 
+fun Route.getAllMessages(
+    chatRoomController: ChatRoomController
+) {
+    get("getMessages") {
+        try {
+            chatRoomController.autoDeleteChat()
+            val page = call.parameters["page"]?.toInt()
+            if (page == null || page <= 0) {
+                call.respond(SignUpResponse(false, "wrong count"))
+            } else {
+                val messages = chatRoomController.getAllMessages(page)
+                call.respond(CommonResponse(res = true, data = messages))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+
+    }
+}
+
+fun Route.deleteAllMessages(
+    chatRoomController: ChatRoomController
+){
+    delete ("deleteAllMessages") {
+        try {
+            chatRoomController.deleteAllMessages()
+            call.respond(CommonResponse(res = true , message = "Messages deleted" , data = null))
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+    }
 }

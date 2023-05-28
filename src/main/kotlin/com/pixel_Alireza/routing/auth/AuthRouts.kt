@@ -49,6 +49,11 @@ fun Route.signUp(
         //<editor-fold desc="isFormatCorrect?">
         val isFieldsBlank = req.password.isBlank() || username.isBlank()
         val isPasswordTooShort = req.password.length < 8
+        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+        if (!req.email.matches(emailPattern.toRegex())) {
+            call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Invalid email format"))
+            return@post
+        }
         if (isFieldsBlank || isPasswordTooShort) {
             call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Invalid information"))
             return@post

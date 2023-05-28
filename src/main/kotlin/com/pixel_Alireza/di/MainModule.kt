@@ -1,7 +1,7 @@
 package com.pixel_Alireza.di
 
-import com.pixel_Alireza.data.CustomRoomDataSource
-import com.pixel_Alireza.data.KMongoCustomRoom
+import com.pixel_Alireza.data.ChatDatasource
+import com.pixel_Alireza.data.KMongoChat
 import com.pixel_Alireza.data.model.user.KMongoUserDataManager
 import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.globalRoom.ChatRoomController
@@ -17,30 +17,31 @@ import org.litote.kmongo.reactivestreams.KMongo
 val mainModule = module {
 
     val userDatabaseName = "userDatabaseName"
-        single(named(userDatabaseName)) {
-            val dbname = "Users"
-            KMongo.createClient()
-                .coroutine
-                .getDatabase(dbname)
-        }
-
-    val customRoom = "customRooms"
-    single(named(customRoom)) {
-        val dbname = "Rooms"
+    single(named(userDatabaseName)) {
+        val dbname = "Users"
         KMongo.createClient()
             .coroutine
             .getDatabase(dbname)
     }
 
-    single <UserDataManager> { KMongoUserDataManager(get(named(userDatabaseName)) , get()) }
+    val chatDatabase = "chatDatabase"
+    single(named(chatDatabase)) {
+        val dbname = "chatDatabase"
+        KMongo.createClient()
+            .coroutine
+            .getDatabase(dbname)
+    }
 
-    single <TokenService> { JWTtokenService() }
+    single<UserDataManager> { KMongoUserDataManager(get(named(userDatabaseName)), get()) }
 
-    single <HashingService> { SHA256HashingService() }
+    single<TokenService> { JWTtokenService() }
 
-    single { ChatRoomController() }
+    single<HashingService> { SHA256HashingService() }
 
-    single <CustomRoomDataSource>{ KMongoCustomRoom(get(named(customRoom))) }
+    single<ChatDatasource> { KMongoChat(get(named(chatDatabase))) }
+
+
+    single { ChatRoomController(get()) }
 
 
 }
