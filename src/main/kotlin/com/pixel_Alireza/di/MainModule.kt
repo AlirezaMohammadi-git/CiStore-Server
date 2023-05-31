@@ -1,7 +1,9 @@
 package com.pixel_Alireza.di
 
-import com.pixel_Alireza.data.ChatDatasource
-import com.pixel_Alireza.data.KMongoChat
+import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.model.repository.chat.KMongoChat
+import com.pixel_Alireza.data.model.repository.store.StoreDataSource
+import com.pixel_Alireza.data.model.repository.store.KMongoStore
 import com.pixel_Alireza.data.model.user.KMongoUserDataManager
 import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.globalRoom.ChatRoomController
@@ -18,18 +20,23 @@ val mainModule = module {
 
     val userDatabaseName = "userDatabaseName"
     single(named(userDatabaseName)) {
-        val dbname = "Users"
         KMongo.createClient()
             .coroutine
-            .getDatabase(dbname)
+            .getDatabase(userDatabaseName)
     }
 
     val chatDatabase = "chatDatabase"
     single(named(chatDatabase)) {
-        val dbname = "chatDatabase"
         KMongo.createClient()
             .coroutine
-            .getDatabase(dbname)
+            .getDatabase(chatDatabase)
+    }
+
+    val storeDatabase = "StoreDatabase"
+    single(named(storeDatabase)) {
+        KMongo.createClient()
+            .coroutine
+            .getDatabase(storeDatabase)
     }
 
     single<UserDataManager> { KMongoUserDataManager(get(named(userDatabaseName)), get()) }
@@ -40,8 +47,9 @@ val mainModule = module {
 
     single<ChatDatasource> { KMongoChat(get(named(chatDatabase))) }
 
-
     single { ChatRoomController(get()) }
+
+    single <StoreDataSource>{ KMongoStore(get(named(storeDatabase))) }
 
 
 }

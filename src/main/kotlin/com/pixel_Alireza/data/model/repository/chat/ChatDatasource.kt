@@ -1,4 +1,4 @@
-package com.pixel_Alireza.data
+package com.pixel_Alireza.data.model.repository.chat
 
 import com.pixel_Alireza.data.model.message.Message
 import org.bson.codecs.pojo.annotations.BsonId

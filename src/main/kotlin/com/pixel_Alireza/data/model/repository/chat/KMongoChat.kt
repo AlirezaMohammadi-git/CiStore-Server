@@ -1,4 +1,4 @@
-package com.pixel_Alireza.data
+package com.pixel_Alireza.data.model.repository.chat
 
 import com.mongodb.client.model.Filters.where
 import com.pixel_Alireza.data.model.message.Message

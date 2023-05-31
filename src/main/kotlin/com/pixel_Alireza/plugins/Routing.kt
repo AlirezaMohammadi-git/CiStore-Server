@@ -1,6 +1,6 @@
 package com.pixel_Alireza.plugins
 
-import com.pixel_Alireza.data.ChatDatasource
+import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
 import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.globalRoom.ChatRoomController
 import com.pixel_Alireza.routing.auth.*
