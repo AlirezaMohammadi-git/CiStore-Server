@@ -1,6 +1,7 @@
 package com.pixel_Alireza
 
 import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.model.repository.store.StoreDataSource
 import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.di.mainModule
 import com.pixel_Alireza.globalRoom.ChatRoomController
@@ -43,6 +44,7 @@ fun Application.module() {
     val tokenService: TokenService by inject()
     val chatRoomController: ChatRoomController by inject()
     val chatDatasource: ChatDatasource by inject()
+    val storeDatasource: StoreDataSource by inject()
 
     configureSecurity(config = tokenConfig)
     configureMonitoring()
@@ -54,7 +56,8 @@ fun Application.module() {
         tokenService ,
         tokenConfig ,
         chatRoomController ,
-        chatDatasource
+        chatDatasource ,
+        storeDatasource
     )
 
 

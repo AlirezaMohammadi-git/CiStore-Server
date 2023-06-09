@@ -93,9 +93,8 @@ dependencies {
             doLast {
                 val knownHosts = File.createTempFile("knownhosts", "txt")
                 val user = "root"
-                val host = "82.115.21.81"
-                val pk = file("keys/ktor_gameland")
-                val jarFileName = " pixel_Alireza.gameland-all.jar"
+                val host ="82.115.21.81"
+                val pk = file("keys/id_rsa")
                 try {
                     "scp"(
                         "file" to file("build/libs/pixel_Alireza.gameland-all.jar"),

@@ -1,5 +1,6 @@
 package com.pixel_Alireza.routing.socket
 
+import com.pixel_Alireza.data.model.request.CloseSession
 import com.pixel_Alireza.data.model.response.CommonResponse
 import com.pixel_Alireza.data.model.response.auth.SignUpResponse
 import com.pixel_Alireza.globalRoom.ChatRoomController
@@ -19,32 +20,27 @@ fun Route.globalChat(
     chatRoomController: ChatRoomController
 ) {
     webSocket("/globalChat") {
-//        val session = call.sessions.get<MySession>() // getting a MySession form android
+        val close = CloseSession()
         val session = this.call.sessions.get<ChatSession>()
-
         if (session == null) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
             return@webSocket
         }
-
         try {
             chatRoomController.onJoin(
                 sessionId = session.sessionId,
                 username = session.userName,
                 sockets = this
             )
-
-
             incoming.consumeEach { frame ->
                 if (frame is Frame.Text) {
-                    chatRoomController.sendMessage(
-                        session.userName,
-                        frame.readText()
-                    )
+                        chatRoomController.sendMessage(
+                            session.userName,
+                            frame.readText()
+                        )
+                        return@webSocket
                 }
             }
-
-
         } catch (e: MemberAlreadyExistException) {
             call.respond(HttpStatusCode.Conflict, "Member already exist!")
         } catch (e: Exception) {
@@ -52,7 +48,6 @@ fun Route.globalChat(
         } finally {
             chatRoomController.tryDisconnect(session.userName)
         }
-
     }
 }
 
@@ -80,13 +75,30 @@ fun Route.getAllMessages(
 
 fun Route.deleteAllMessages(
     chatRoomController: ChatRoomController
-){
-    delete ("deleteAllMessages") {
+) {
+    delete("deleteAllMessages") {
         try {
             chatRoomController.deleteAllMessages()
-            call.respond(CommonResponse(res = true , message = "Messages deleted" , data = null))
+            call.respond(CommonResponse(res = true, message = "Messages deleted", data = null))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
+
+fun Route.disconnect(chatRoomController: ChatRoomController){
+    delete ("tryDisconnect"){
+        val username = call.parameters["username"].toString()
+        try {
+            if (username.isNotBlank()){
+                chatRoomController.tryDisconnect(username)
+                call.respond(HttpStatusCode.OK)
+            }else{
+                call.respond(HttpStatusCode.ExpectationFailed)
+            }
         }catch (e:Exception){
             e.printStackTrace()
+            call.respond(HttpStatusCode.ExpectationFailed)
         }
     }
 }

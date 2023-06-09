@@ -2,6 +2,7 @@ package com.pixel_Alireza.data.model.repository.chat
 
 import com.mongodb.client.model.Filters.where
 import com.pixel_Alireza.data.model.message.Message
+import com.pixel_Alireza.data.model.request.CloseSession
 import org.bson.Document
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
@@ -42,8 +43,11 @@ class KMongoChat(
     }
 
     override suspend fun insertMessage(message: Message) {
+        val close = CloseSession()
         try {
-            roomDatabase.insertOne(message)
+            if (message.text != close.closeSession){
+                roomDatabase.insertOne(message)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

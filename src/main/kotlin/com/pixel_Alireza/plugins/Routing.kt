@@ -1,10 +1,13 @@
 package com.pixel_Alireza.plugins
 
 import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.model.repository.store.StoreDataSource
 import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.globalRoom.ChatRoomController
+import com.pixel_Alireza.routing.Store.*
 import com.pixel_Alireza.routing.auth.*
 import com.pixel_Alireza.routing.socket.deleteAllMessages
+import com.pixel_Alireza.routing.socket.disconnect
 import com.pixel_Alireza.routing.socket.getAllMessages
 import com.pixel_Alireza.routing.socket.globalChat
 import com.pixel_Alireza.security.hashing.HashingService
@@ -20,7 +23,8 @@ fun Application.configureRouting(
     tokenService: TokenService,
     config: TokenConfig,
     chatRoomController: ChatRoomController,
-    chatDatasource: ChatDatasource
+    chatDatasource: ChatDatasource ,
+    storeDataSource: StoreDataSource
 ) {
 
     routing {
@@ -52,6 +56,18 @@ fun Application.configureRouting(
         getAllMessages(chatRoomController)
 
         deleteAllMessages(chatRoomController)
+
+        StoreGetAllItems(storeDataSource)
+
+        postStoreItem(storeDataSource)
+
+        deleteitem(storeDataSource)
+
+        updatingItems(storeDataSource)
+
+        disconnect(chatRoomController)
+
+
 
         // Static plugin. Try to access `/static/index.html`
         static("/static") {

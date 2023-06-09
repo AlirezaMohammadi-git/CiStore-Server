@@ -11,18 +11,24 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Route.StoreRouts(
+fun Route.StoreGetAllItems(
     storeDataSource: StoreDataSource
 ) {
     get("getStoreItems") {
-        call.respond(HttpStatusCode.OK, storeDataSource.getAllItems())
+        try {
+            call.respond(CommonResponse(true, null, storeDataSource.getAllItems()))
+        }catch (e:Exception){
+            call.respond(CommonResponse(false, e.message, null))
+        }
     }
+}
 
-
+fun Route.postStoreItem(
+    storeDataSource: StoreDataSource
+) {
     //inserting
-    post("wA(G@m4#&JaLSc6Q") {
-
-        val newData = call.receive<StoreData>()
+    post<StoreData>("postnewItem") {
+        val newData = it
         val result = storeDataSource.addItem(newData)
         when (result) {
             is Resource.Error -> call.respond(
@@ -31,16 +37,21 @@ fun Route.StoreRouts(
             )
 
             is Resource.Success -> call.respond(
-                HttpStatusCode.OK ,
-                CommonResponse(true,"item added!",null)
+                HttpStatusCode.OK,
+                CommonResponse(true, "item added!", null)
             )
         }
 
 
     }
+}
+
+fun Route.deleteitem(
+    storeDataSource: StoreDataSource
+) {
     delete("8vIFT(RAuYx@n&jh") {
         val id = call.parameters["id"]
-        val result = storeDataSource.deleteItem(id?:"-1")
+        val result = storeDataSource.deleteItem(id ?: "-1")
         when (result) {
             is Resource.Error -> call.respond(
                 HttpStatusCode.ExpectationFailed,
@@ -48,13 +59,18 @@ fun Route.StoreRouts(
             )
 
             is Resource.Success -> call.respond(
-                HttpStatusCode.OK ,
-                CommonResponse(true,"item deleted!",null)
+                HttpStatusCode.OK,
+                CommonResponse(true, "item deleted!", null)
             )
         }
     }
+}
+
+fun Route.updatingItems(
+    storeDataSource: StoreDataSource
+) {
     //updating
-    put(")wP+Q%k4zagI3nNf") {
+    put("qvIjT(R#uYx1n&jh") {
         val newData = call.receive<StoreData>()
         val result = storeDataSource.updateItem(newData)
         when (result) {
@@ -64,10 +80,9 @@ fun Route.StoreRouts(
             )
 
             is Resource.Success -> call.respond(
-                HttpStatusCode.OK ,
-                CommonResponse(true,"item updated!",null)
+                HttpStatusCode.OK,
+                CommonResponse(true, "item updated!", null)
             )
         }
     }
-
 }
