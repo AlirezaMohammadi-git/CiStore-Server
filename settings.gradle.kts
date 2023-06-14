@@ -1,0 +1,1 @@
+rootProject.name = "pixel_Alireza.gameland"
