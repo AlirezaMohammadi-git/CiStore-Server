@@ -21,7 +21,6 @@ fun Route.globalChat(
 ) {
 
     webSocket("/globalChat") {
-
 //        val session = call.sessions.get<MySession>() // getting a MySession form android
         val session = this.call.sessions.get<ChatSession>()
 

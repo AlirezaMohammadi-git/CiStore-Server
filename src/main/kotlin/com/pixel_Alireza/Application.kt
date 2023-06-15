@@ -36,7 +36,7 @@ fun Application.module() {
         issuer = environment.config.property("jwt.issuer").getString(),
         audience = environment.config.property("jwt.audience").getString(),
         expiresIn = 60L * 60L * 1000 * 24L * 180,
-        secret = System.getenv("JWT_ENV")
+        secret = "pixel-alireza-secret-eennvv"
     )
 
 

@@ -1,7 +1,6 @@
 package com.pixel_Alireza.globalRoom
 
 import com.pixel_Alireza.data.model.message.Message
-import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -16,7 +15,7 @@ class ChatRoomController {
     fun onJoin(
         sessionId: String,
         username: String,
-        sockets: DefaultWebSocketServerSession
+        sockets: WebSocketSession
     ) {
         if (activeMembersList.containsKey(username)) {
             throw MemberAlreadyExistException()
@@ -27,6 +26,7 @@ class ChatRoomController {
             sessionId = sessionId,
             socket = sockets
         )
+
     }
 
     suspend fun sendMessage(
