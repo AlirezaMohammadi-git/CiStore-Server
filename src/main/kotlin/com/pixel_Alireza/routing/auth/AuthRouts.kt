@@ -40,7 +40,7 @@ fun Route.signUp(
         }
 
         if (req.username == null) {
-            call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Fields blank or short pass exception"))
+            call.respond(SignUpResponse(false, "Fields blank or short pass exception"))
             return@post
         } else {
             username = req.username
@@ -51,11 +51,11 @@ fun Route.signUp(
         val isPasswordTooShort = req.password.length < 8
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
         if (!req.email.matches(emailPattern.toRegex())) {
-            call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Invalid email format"))
+            call.respond(SignUpResponse(false, "Invalid email format"))
             return@post
         }
         if (isFieldsBlank || isPasswordTooShort) {
-            call.respond(HttpStatusCode.Conflict, SignUpResponse(false, "Invalid information"))
+            call.respond(SignUpResponse(false, "Invalid information"))
             return@post
         }
         //</editor-fold>
@@ -70,12 +70,11 @@ fun Route.signUp(
         val res = userDataManager.insertNewUser(user)
         when (res) {
             is Resource.Success -> {
-                call.respond(HttpStatusCode.OK, SignUpResponse(res.data ?: true, " user added successfully"))
+                call.respond(SignUpResponse(res.data ?: true, " user added successfully"))
             }
 
             is Resource.Error -> {
                 call.respond(
-                    HttpStatusCode.Conflict,
                     SignUpResponse(false, res.message ?: " something went wrong from server")
                 )
             }
@@ -102,7 +101,7 @@ fun Route.signIn(
 
         val user = userDataManager.getUserByEmail(req.email)
         if (user == null) {
-            call.respond(HttpStatusCode.Unauthorized, SignInResponse(false, message = "Incorrect username or password"))
+            call.respond(SignInResponse(false, message = "Incorrect username or password"))
             return@post
         }
 
@@ -114,7 +113,7 @@ fun Route.signIn(
             )
         )
         if (!isPassValid) {
-            call.respond(HttpStatusCode.Unauthorized, SignInResponse(false, message = "Incorrect username or password"))
+            call.respond(SignInResponse(false, message = "Incorrect username or password"))
             return@post
         }
 
@@ -192,35 +191,38 @@ fun Route.updateUsername(
 
 
 fun Route.updatePass(
-    userDataManager: UserDataManager ,
+    userDataManager: UserDataManager,
     hashingService: HashingService
 ) {
-        post<UpdatePassword>("/updatePass") {
-            if (it.email.isBlank() && it.newPassword.isBlank()) {
-                call.respond(HttpStatusCode.BadRequest, SignUpResponse(false, "invalid information"))
-            }
-            val user = userDataManager.getUserByEmail(it.email)
-            if (user!=null){
-                val isPassValid = hashingService.verify(
-                    userPass = it.oldPass,
-                    saltedHash = SaltedHash(
-                        hash = user.password,
-                        salt = user.salt
-                    )
-                )
-                if (isPassValid){
-                    val res = userDataManager.updatePassword(it.email, it.newPassword)
-                    if (res) {
-                        call.respond(HttpStatusCode.OK, SignUpResponse(true, "password updated"))
-                    } else {
-                        call.respond(HttpStatusCode.ExpectationFailed, SignUpResponse(false, "something went wrong in server"))
-                    }
-
-                }
-            }else{
-                call.respond(HttpStatusCode.OK, SignUpResponse(true, "wrong email or password"))
-            }
+    post<UpdatePassword>("/updatePass") {
+        if (it.email.isBlank() && it.newPassword.isBlank()) {
+            call.respond(HttpStatusCode.BadRequest, SignUpResponse(false, "invalid information"))
         }
+        val user = userDataManager.getUserByEmail(it.email)
+        if (user != null) {
+            val isPassValid = hashingService.verify(
+                userPass = it.oldPass,
+                saltedHash = SaltedHash(
+                    hash = user.password,
+                    salt = user.salt
+                )
+            )
+            if (isPassValid) {
+                val res = userDataManager.updatePassword(it.email, it.newPassword)
+                if (res) {
+                    call.respond(HttpStatusCode.OK, SignUpResponse(true, "password updated"))
+                } else {
+                    call.respond(
+                        HttpStatusCode.ExpectationFailed,
+                        SignUpResponse(false, "something went wrong in server")
+                    )
+                }
+
+            }
+        } else {
+            call.respond(HttpStatusCode.OK, SignUpResponse(true, "wrong email or password"))
+        }
+    }
 }
 
 

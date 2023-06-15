@@ -18,9 +18,9 @@ class KMongoUserDataManager(
             val sameEmail = userDatabase.findOne(User::email eq user.email)?.email
             val sameUsername = userDatabase.findOne(User::username eq user.username)?.username
             if (sameUsername != null) {
-                Resource.Error(message = "same username")
+                Resource.Error(message = "Another user is using this username")
             } else if (sameEmail != null) {
-                Resource.Error(message = "same email")
+                Resource.Error(message = "This email already registered, please login.")
             } else {
                 userDatabase.insertOne(user)
                 Resource.Success(true)

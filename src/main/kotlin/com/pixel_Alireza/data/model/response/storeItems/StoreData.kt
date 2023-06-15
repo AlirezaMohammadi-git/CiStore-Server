@@ -7,8 +7,8 @@ import org.bson.types.ObjectId
 @Serializable
 data class StoreData(
     val name: String,
-    val count: Int,
-    val price: String,
+    val amount: Int,
+    val price: Int,
     val imageURL: String,
     val priority: Int,
     val id: String = ObjectId().toString()
