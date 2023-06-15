@@ -24,21 +24,21 @@ fun Route.globalChat(
         val session = this.call.sessions.get<ChatSession>()
         if (session == null) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
-            return@webSocket
         }
         try {
-            chatRoomController.onJoin(
-                sessionId = session.sessionId,
-                username = session.userName,
-                sockets = this
-            )
-            incoming.consumeEach { frame ->
-                if (frame is Frame.Text) {
+            if (session != null) {
+                chatRoomController.onJoin(
+                    sessionId = session.sessionId,
+                    username = session.userName,
+                    sockets = this
+                )
+                incoming.consumeEach { frame ->
+                    if (frame is Frame.Text) {
                         chatRoomController.sendMessage(
                             session.userName,
                             frame.readText()
                         )
-                        return@webSocket
+                    }
                 }
             }
         } catch (e: MemberAlreadyExistException) {
@@ -46,7 +46,7 @@ fun Route.globalChat(
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-            chatRoomController.tryDisconnect(session.userName)
+            chatRoomController.tryDisconnect(session?.userName ?: "")
         }
     }
 }
