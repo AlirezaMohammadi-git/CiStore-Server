@@ -11,6 +11,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
+
+
+
 fun Route.StoreGetAllItems(
     storeDataSource: StoreDataSource
 ) {
@@ -22,6 +25,17 @@ fun Route.StoreGetAllItems(
         }
     }
 }
+
+
+
+
+///////////////////////////////////////////////////
+// below routing is used for second app that control the first
+///////////////////////////////////////////////////
+
+
+
+
 
 fun Route.postStoreItem(
     storeDataSource: StoreDataSource
