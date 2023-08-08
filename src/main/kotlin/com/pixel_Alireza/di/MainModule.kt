@@ -2,6 +2,8 @@ package com.pixel_Alireza.di
 
 import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
 import com.pixel_Alireza.data.model.repository.chat.KMongoChat
+import com.pixel_Alireza.data.model.repository.discounts.DiscountDataSource
+import com.pixel_Alireza.data.model.repository.discounts.KMonogoDiscount
 import com.pixel_Alireza.data.model.repository.store.StoreDataSource
 import com.pixel_Alireza.data.model.repository.store.KMongoStore
 import com.pixel_Alireza.data.model.user.KMongoUserDataManager
@@ -39,17 +41,33 @@ val mainModule = module {
             .getDatabase(storeDatabase)
     }
 
+    val discountDatabase = "DiscountDatabase"
+    single(named(discountDatabase)) {
+        KMongo.createClient()
+            .coroutine
+            .getDatabase(discountDatabase)
+    }
+
+    // user authentication database
     single<UserDataManager> { KMongoUserDataManager(get(named(userDatabaseName)), get()) }
 
+    // related to auth service :
     single<TokenService> { JWTtokenService() }
 
+    // related to auth service :
     single<HashingService> { SHA256HashingService() }
 
+    // all chats text will save in this database
     single<ChatDatasource> { KMongoChat(get(named(chatDatabase))) }
 
+    // controller interface of chat room
     single { ChatRoomController(get()) }
 
-    single <StoreDataSource>{ KMongoStore(get(named(storeDatabase))) }
+    // old system of showing data to user (maybe need to delete)
+    single<StoreDataSource> { KMongoStore(get(named(storeDatabase))) }
+
+    // discount database for discount
+    single<DiscountDataSource> { KMonogoDiscount(get(named(discountDatabase))) }
 
 
 }

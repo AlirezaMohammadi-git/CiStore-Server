@@ -11,4 +11,5 @@ data class NewDiscounts(
     val mainPrice: Int,
     val discountedPrice: String,
     val imageURL: String,
+    val id: String = ObjectId().toString()
 )

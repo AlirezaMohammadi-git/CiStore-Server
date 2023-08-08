@@ -11,30 +11,22 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-
-
-
 fun Route.StoreGetAllItems(
     storeDataSource: StoreDataSource
 ) {
     get("getStoreItems") {
         try {
             call.respond(CommonResponse(true, null, storeDataSource.getAllItems()))
-        }catch (e:Exception){
+        } catch (e: Exception) {
             call.respond(CommonResponse(false, e.message, null))
         }
     }
 }
 
 
-
-
 ///////////////////////////////////////////////////
 // below routing is used for second app that control the first
 ///////////////////////////////////////////////////
-
-
-
 
 
 fun Route.postStoreItem(

@@ -1,6 +1,7 @@
 package com.pixel_Alireza
 
 import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.model.repository.discounts.DiscountDataSource
 import com.pixel_Alireza.data.model.repository.store.StoreDataSource
 import com.pixel_Alireza.data.model.user.UserDataManager
 import com.pixel_Alireza.di.mainModule
@@ -28,8 +29,6 @@ fun Application.module() {
     }
 
 
-
-
     // 1hour = 60L * 60L * 1000
     val tokenConfig = TokenConfig(
         issuer = environment.config.property("jwt.issuer").getString(),
@@ -44,21 +43,23 @@ fun Application.module() {
     val tokenService: TokenService by inject()
     val chatRoomController: ChatRoomController by inject()
     val chatDatasource: ChatDatasource by inject()
-    val storeDatasource: StoreDataSource by inject()
+    val storeDatasource : StoreDataSource by inject()
+    val discountDataSource : DiscountDataSource by inject()
 
     configureSecurity(config = tokenConfig)
     configureMonitoring()
     configureSerialization()
     configureSockets()
     configureRouting(
-        hashingService ,
-        userDataSource ,
-        tokenService ,
-        tokenConfig ,
-        chatRoomController ,
-        chatDatasource ,
-        storeDatasource
-    )
+        hashingService,
+        userDataSource,
+        tokenService,
+        tokenConfig,
+        chatRoomController,
+        chatDatasource,
+        storeDatasource ,
+        discountDataSource
+        )
 
 
 }
