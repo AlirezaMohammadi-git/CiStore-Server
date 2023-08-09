@@ -1,4 +1,4 @@
-package com.pixel_Alireza.data.model.repository.discounts
+package com.pixel_Alireza.data.repository.store.discounts
 
 import com.example.chatapp.utils.Resource
 import com.pixel_Alireza.data.model.response.storeItems.discounts.NewDiscounts

@@ -1,7 +1,7 @@
-package com.pixel_Alireza.routing.discounts
+package com.pixel_Alireza.routing.Store.discounts
 
 import com.example.chatapp.utils.Resource
-import com.pixel_Alireza.data.model.repository.discounts.DiscountDataSource
+import com.pixel_Alireza.data.repository.store.discounts.DiscountDataSource
 import com.pixel_Alireza.data.model.response.CommonResponse
 import com.pixel_Alireza.data.model.response.storeItems.discounts.NewDiscounts
 import io.ktor.http.*
