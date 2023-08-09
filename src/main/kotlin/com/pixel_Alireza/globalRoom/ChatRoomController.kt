@@ -1,6 +1,6 @@
 package com.pixel_Alireza.globalRoom
 
-import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.repository.chat.ChatDatasource
 import com.pixel_Alireza.data.model.message.Message
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString

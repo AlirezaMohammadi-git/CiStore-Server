@@ -1,19 +1,21 @@
 package com.pixel_Alireza.plugins
 
-import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
-import com.pixel_Alireza.data.model.repository.discounts.DiscountDataSource
-import com.pixel_Alireza.data.model.repository.store.StoreDataSource
 import com.pixel_Alireza.data.model.user.UserDataManager
+import com.pixel_Alireza.data.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.repository.store.discounts.DiscountDataSource
+import com.pixel_Alireza.data.repository.store.gameChooser.GameChooserDataSource
+import com.pixel_Alireza.data.repository.store.old.StoreDataSource
 import com.pixel_Alireza.globalRoom.ChatRoomController
 import com.pixel_Alireza.routing.Store.StoreGetAllItems
 import com.pixel_Alireza.routing.Store.deleteitem
+import com.pixel_Alireza.routing.Store.discounts.GetAllDiscountItems
+import com.pixel_Alireza.routing.Store.discounts.deleteDiscount
+import com.pixel_Alireza.routing.Store.discounts.postNewDiscount
+import com.pixel_Alireza.routing.Store.discounts.updateDiscount
+import com.pixel_Alireza.routing.Store.gameChooser.*
 import com.pixel_Alireza.routing.Store.postStoreItem
 import com.pixel_Alireza.routing.Store.updatingItems
 import com.pixel_Alireza.routing.auth.*
-import com.pixel_Alireza.routing.discounts.GetAllDiscountItems
-import com.pixel_Alireza.routing.discounts.deleteDiscount
-import com.pixel_Alireza.routing.discounts.postNewDiscount
-import com.pixel_Alireza.routing.discounts.updateDiscount
 import com.pixel_Alireza.routing.socket.disconnect
 import com.pixel_Alireza.security.hashing.HashingService
 import com.pixel_Alireza.security.token.TokenConfig
@@ -30,7 +32,8 @@ fun Application.configureRouting(
     chatRoomController: ChatRoomController,
     chatDatasource: ChatDatasource,
     storeDataSource: StoreDataSource,
-    discountDataSource: DiscountDataSource
+    discountDataSource: DiscountDataSource,
+    gameChooserDataSource: GameChooserDataSource
 ) {
 
     routing {
@@ -74,6 +77,19 @@ fun Application.configureRouting(
         deleteDiscount(discountDataSource)
         updateDiscount(discountDataSource)
         //endregion
+
+
+
+        //game products :
+        getAllGameProducts(gameChooserDataSource)
+        postNewGame(gameChooserDataSource)
+        deleteGame(gameChooserDataSource)
+        updateGame(gameChooserDataSource)
+        //product data ( will sow up after game data )
+        getProductDataByTag(gameChooserDataSource)
+        postProductData(gameChooserDataSource)
+        deleteProductData(gameChooserDataSource)
+        updateProductData(gameChooserDataSource)
 
 
         disconnect(chatRoomController)

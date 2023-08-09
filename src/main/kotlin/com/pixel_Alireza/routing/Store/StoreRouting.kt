@@ -1,7 +1,7 @@
 package com.pixel_Alireza.routing.Store
 
 import com.example.chatapp.utils.Resource
-import com.pixel_Alireza.data.model.repository.store.StoreDataSource
+import com.pixel_Alireza.data.repository.store.old.StoreDataSource
 import com.pixel_Alireza.data.model.response.CommonResponse
 import com.pixel_Alireza.data.model.response.storeItems.StoreData
 import io.ktor.http.*

@@ -1,13 +1,15 @@
 package com.pixel_Alireza.di
 
-import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
-import com.pixel_Alireza.data.model.repository.chat.KMongoChat
-import com.pixel_Alireza.data.model.repository.discounts.DiscountDataSource
-import com.pixel_Alireza.data.model.repository.discounts.KMonogoDiscount
-import com.pixel_Alireza.data.model.repository.store.StoreDataSource
-import com.pixel_Alireza.data.model.repository.store.KMongoStore
+import com.pixel_Alireza.data.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.repository.chat.KMongoChat
+import com.pixel_Alireza.data.repository.store.discounts.DiscountDataSource
+import com.pixel_Alireza.data.repository.store.discounts.KMonogoDiscount
+import com.pixel_Alireza.data.repository.store.old.StoreDataSource
+import com.pixel_Alireza.data.repository.store.old.KMongoStore
 import com.pixel_Alireza.data.model.user.KMongoUserDataManager
 import com.pixel_Alireza.data.model.user.UserDataManager
+import com.pixel_Alireza.data.repository.store.gameChooser.GameChooserDataSource
+import com.pixel_Alireza.data.repository.store.gameChooser.KMongoGameChooser
 import com.pixel_Alireza.globalRoom.ChatRoomController
 import com.pixel_Alireza.security.hashing.HashingService
 import com.pixel_Alireza.security.hashing.SHA256HashingService
@@ -41,12 +43,6 @@ val mainModule = module {
             .getDatabase(storeDatabase)
     }
 
-    val discountDatabase = "DiscountDatabase"
-    single(named(discountDatabase)) {
-        KMongo.createClient()
-            .coroutine
-            .getDatabase(discountDatabase)
-    }
 
     // user authentication database
     single<UserDataManager> { KMongoUserDataManager(get(named(userDatabaseName)), get()) }
@@ -67,7 +63,10 @@ val mainModule = module {
     single<StoreDataSource> { KMongoStore(get(named(storeDatabase))) }
 
     // discount database for discount
-    single<DiscountDataSource> { KMonogoDiscount(get(named(discountDatabase))) }
+    single<DiscountDataSource> { KMonogoDiscount(get(named(storeDatabase))) }
+
+    // game chooser
+    single<GameChooserDataSource> { KMongoGameChooser(get(named(storeDatabase))) }
 
 
 }

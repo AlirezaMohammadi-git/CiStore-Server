@@ -1,9 +1,10 @@
 package com.pixel_Alireza
 
-import com.pixel_Alireza.data.model.repository.chat.ChatDatasource
-import com.pixel_Alireza.data.model.repository.discounts.DiscountDataSource
-import com.pixel_Alireza.data.model.repository.store.StoreDataSource
+import com.pixel_Alireza.data.repository.chat.ChatDatasource
+import com.pixel_Alireza.data.repository.store.discounts.DiscountDataSource
+import com.pixel_Alireza.data.repository.store.old.StoreDataSource
 import com.pixel_Alireza.data.model.user.UserDataManager
+import com.pixel_Alireza.data.repository.store.gameChooser.GameChooserDataSource
 import com.pixel_Alireza.di.mainModule
 import com.pixel_Alireza.globalRoom.ChatRoomController
 import com.pixel_Alireza.plugins.*
@@ -45,6 +46,7 @@ fun Application.module() {
     val chatDatasource: ChatDatasource by inject()
     val storeDatasource : StoreDataSource by inject()
     val discountDataSource : DiscountDataSource by inject()
+    val gameChooserDataSource : GameChooserDataSource by inject()
 
     configureSecurity(config = tokenConfig)
     configureMonitoring()
@@ -58,7 +60,8 @@ fun Application.module() {
         chatRoomController,
         chatDatasource,
         storeDatasource ,
-        discountDataSource
+        discountDataSource ,
+        gameChooserDataSource
         )
 
 

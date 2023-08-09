@@ -1,10 +1,17 @@
 package com.pixel_Alireza.data.model.response.storeItems.gameChooser
 
+
+import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId
 
-data class GameProductData(
+
+@Serializable
+data class GameProductData (
     val name : String ,
-    val isNewProduct : Boolean ,
+    var isNewProduct : Boolean ,
     val image : String ,
+    val gameTag : String ,
+    // most be different for each item
+    val productTag : String ,
     val id : String = ObjectId().toString()
 )
